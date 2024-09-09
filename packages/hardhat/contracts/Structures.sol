@@ -37,8 +37,8 @@ contract Structures {
         string description;
         string diagnosis;
         string treatment;
+        string imageUrl;
         uint createdTimestamp;
-        uint updatedTimestamp;
     }
 
     struct Appointment {

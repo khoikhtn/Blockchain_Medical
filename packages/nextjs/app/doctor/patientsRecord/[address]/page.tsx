@@ -21,7 +21,7 @@ const PatientRecord = () => {
     weight: string;
     houseAddr: string;
     allergies: string;
-    records: { id: bigint; description: string; diagnosis: string; treatment: string; createdTimestamp: bigint; updatedTimestamp: bigint }[];
+    records: { id: bigint; description: string; diagnosis: string; treatment: string; imageUrl: string; createdTimestamp: bigint;}[];
     recordCount: bigint;
   }>();
 
@@ -49,7 +49,7 @@ const PatientRecord = () => {
         weight: weight as string,
         houseAddr: houseAddr as string,
         allergies: allergies as string,
-        records: records as { id: bigint; description: string; diagnosis: string; treatment: string; createdTimestamp: bigint; updatedTimestamp: bigint }[],
+        records: records as { id: bigint; description: string; diagnosis: string; treatment: string; imageUrl: string; createdTimestamp: bigint;}[],
         recordCount: recordCount as bigint
       });
     }
@@ -58,7 +58,7 @@ const PatientRecord = () => {
   // Add medical record
   const { writeContractAsync: addRecord } = useScaffoldWriteContract("HealthcareSystem");
 
-  const handleAddingRecord = async (e: FormEvent, description: string, diagnosis: string, treatment: string, clearInput: () => void) => {
+  const handleAddingRecord = async (e: FormEvent, description: string, diagnosis: string, treatment: string, imageUrl: string) => {
 
     e.preventDefault();
 
@@ -66,14 +66,12 @@ const PatientRecord = () => {
       await addRecord(
         {
           functionName: "addRecord",
-          args: [patientAddress, description, diagnosis, treatment].filter(Boolean) as [string, string, string, string],
+          args: [patientAddress, description, diagnosis, treatment, imageUrl].filter(Boolean) as [string, string, string, string, string],
         }
       );
     } catch (error) {
       console.error("Error adding record", error);
     }
-
-    clearInput();
 
   }
 

@@ -19,7 +19,7 @@ const Profile = () => {
     weight: string;
     houseAddr: string;
     allergies: string;
-    records: { id: bigint; description: string; diagnosis: string; treatment: string; createdTimestamp: bigint; updatedTimestamp: bigint }[];
+    records: { id: bigint; description: string; diagnosis: string; treatment: string; imageUrl: string;  createdTimestamp: bigint; }[];
     recordCount: bigint;
   }>();
 
@@ -47,7 +47,7 @@ const Profile = () => {
         weight: weight as string,
         houseAddr: houseAddr as string,
         allergies: allergies as string,
-        records: records as { id: bigint; description: string; diagnosis: string; treatment: string; createdTimestamp: bigint; updatedTimestamp: bigint }[],
+        records: records as { id: bigint; description: string; diagnosis: string; treatment: string; imageUrl: string; createdTimestamp: bigint; }[],
         recordCount: recordCount as bigint
       });
     }

@@ -1,4 +1,4 @@
-import { Activity, Stethoscope, Pill} from 'lucide-react';
+import { Activity, Stethoscope, Pill, Calendar, Image, IdCard } from 'lucide-react';
 
 export const RecordItems = [
   {
@@ -15,5 +15,15 @@ export const RecordItems = [
     icon: Pill,
     title: 'Treatment',
     label: 'treatment'
+  },
+  {
+    icon: Calendar,
+    title: 'Created',
+    label: 'createdTimestamp'
+  },
+  {
+    icon: Image,
+    title: 'Image',
+    label: 'imageUrl'
   }
 ]

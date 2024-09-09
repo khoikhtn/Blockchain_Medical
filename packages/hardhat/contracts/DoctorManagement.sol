@@ -11,6 +11,12 @@ contract DoctorManagement is Structures{
         require(!isDoctor[msg.sender], "Doctor profile already exists!");
         require(!isPatient[msg.sender], "You are already a patient!");
 
+        for (uint i = 0; i < requestedDoctorList.length; i++) {
+          if (msg.sender == requestedDoctorList[i]) {
+            revert("You already requested to be the doctor");
+          }
+        }
+
         Doctor storage doctor = doctors[msg.sender];
         doctor.name = _name;
         doctor.major = _major;
@@ -50,7 +56,7 @@ contract DoctorManagement is Structures{
     }
 
     // Authorized doctors add record to patient's profile
-    function addRecord(address _patient, string memory _description, string memory _diagnosis, string memory _treatment) public onlyAuthorizedDoctors(_patient) {
+    function addRecord(address _patient, string memory _description, string memory _diagnosis, string memory _treatment, string memory _imageUrl) public onlyAuthorizedDoctors(_patient) {
 
         require(isDoctor[msg.sender], "Only doctors can create new record");
         require(isPatient[_patient], "That address is not a patient");
@@ -62,8 +68,8 @@ contract DoctorManagement is Structures{
             description: _description,
             diagnosis: _diagnosis,
             treatment: _treatment,
-            createdTimestamp: block.timestamp,
-            updatedTimestamp: block.timestamp
+            imageUrl: _imageUrl,
+            createdTimestamp: block.timestamp
         }));
 
         patient.recordCount++;

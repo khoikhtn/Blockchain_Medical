@@ -9,5 +9,5 @@ const InfoItem = ({ icon: Icon, label, value }: { icon: any, label: string, valu
       </div>
     </div>
 );
-  
+
 export default InfoItem

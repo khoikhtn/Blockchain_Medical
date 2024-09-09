@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
-import { Pill, Stethoscope, CalendarDays, Phone, User, Droplet, Ruler, Weight, Home, AlertTriangle, FileText, Calendar, Activity, LucideIcon, Icon } from 'lucide-react';
+import React, { useState, FormEvent } from 'react';
+import { Pill, Stethoscope, FileText, Calendar, LucideIcon } from 'lucide-react';
 import { InfoItems } from '~~/data/infoItem';
 import { RecordItems } from '~~/data/recordItem';
 
-import InfoItem from './patientInfo/infoItem';
+import InfoItem from '~~/components/patientInfo/infoItem';
 import RecordDisplay from './patientInfo/recordDisplay';
+import { pinata } from '~~/utils/pinata_config';
 
 interface PatientInfoProps {
   patient: Patient;
   fromDoctor: boolean;
-  onHandlingRecord?: (e: React.FormEvent, description: string, diagnosis: string, treatment: string, clearInput: () => void) => void;
+  onHandlingRecord?: (e: React.FormEvent, description: string, diagnosis: string, treatment: string, imageUrl: string) => void;
 }
 
 interface MedicalRecord {
@@ -17,6 +18,7 @@ interface MedicalRecord {
   description: string;
   diagnosis: string;
   treatment: string;
+  imageUrl: string;
   createdTimestamp: bigint;
 }
 
@@ -51,7 +53,7 @@ const PatientInfo: React.FC<PatientInfoProps> = ({ patient, fromDoctor, onHandli
   const [diagnosis, setDiagnosis] = useState('');
   const [treatment, setTreatment] = useState('');
 
-  const { records, recordCount, ...patientInfo } = patient;
+  const [selectedFile, setSelectedFile]: any = useState();
 
   const infoItems: InfoItem[] = InfoItems;
   const recordItems: RecordItem[] = RecordItems;
@@ -62,7 +64,31 @@ const PatientInfo: React.FC<PatientInfoProps> = ({ patient, fromDoctor, onHandli
     setTreatment('');
   }
 
-  type PatientInfoKeys = keyof typeof patientInfo;
+  const handleUploadIPFS = async (e: FormEvent) => {
+
+    e.preventDefault();
+
+    try {
+      const upload = await pinata.upload.file(selectedFile)
+      console.log(upload);
+
+      const signedUrl = await pinata.gateways.createSignedURL({
+        cid: upload.cid,
+        expires: 3600
+      })
+
+      if (onHandlingRecord && signedUrl) {
+        onHandlingRecord(e, description, diagnosis, treatment, signedUrl)
+        
+        clearInput()
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  type PatientInfoKeys = keyof typeof patient;
 
   return (
     <div className={`${fromDoctor ? 'flex gap-8 h-screen' : ''}`}>
@@ -94,14 +120,6 @@ const PatientInfo: React.FC<PatientInfoProps> = ({ patient, fromDoctor, onHandli
                       record={record} 
                     />
                   ))}
-
-                  <div className="space-y-1 bg-gray-50 rounded-lg shadow-sm p-3">
-                    <span className="text-lg font-medium text-gray-500 flex items-center gap-1">
-                      <Calendar className="h-4 w-4 text-gray-400" />
-                      Created:
-                    </span>
-                    <p className="text-lg text-gray-800">{new Date(Number(record.createdTimestamp) * 1000).toLocaleString()}</p>
-                  </div>
                 </div>
               </li>
             ))}
@@ -115,7 +133,7 @@ const PatientInfo: React.FC<PatientInfoProps> = ({ patient, fromDoctor, onHandli
       {fromDoctor && onHandlingRecord && (
         <div className="w-full md:w-1/2 p-8 bg-white shadow-lg rounded-lg h-2/3">
           <h3 className="text-2xl font-semibold text-blue-600 mb-6">Add New Record</h3>
-          <form onSubmit={(e) => onHandlingRecord(e, description, diagnosis, treatment, clearInput)} className="space-y-6">
+          <form onSubmit={(e) => handleUploadIPFS(e)} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="description" className="flex items-center text-lg font-medium text-gray-700">
                 <FileText className="mr-2 h-5 w-5 text-blue-500" />
@@ -164,6 +182,9 @@ const PatientInfo: React.FC<PatientInfoProps> = ({ patient, fromDoctor, onHandli
               />
             </div>
 
+            <label className='form-label'>Choose file</label>
+            <input type="file" onChange={(e: any) => setSelectedFile(e.target.files[0])}/>
+
             <div className="flex justify-center mt-6">
               <button
                 type="submit"
@@ -173,6 +194,8 @@ const PatientInfo: React.FC<PatientInfoProps> = ({ patient, fromDoctor, onHandli
               </button>
             </div>
           </form>
+
+          
         </div>
       )}
     </div>

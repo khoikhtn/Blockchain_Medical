@@ -14,8 +14,8 @@ const Feature: React.FC<FeatureProps> = ({ imageSrc, title }) => (
       <Image
         src={imageSrc}
         alt={title}
-        layout="fill"
-        objectFit="contain"
+        width={500} 
+        height={500}
       />
     </div>
     <h3 className="text-3xl font-bold uppercase">{title}</h3>
