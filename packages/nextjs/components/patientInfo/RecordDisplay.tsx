@@ -22,14 +22,19 @@ const RecordDisplay = ({ icon: Icon, title, label, record }: { icon: any, title:
           {new Date(Number(record.createdTimestamp) * 1000).toLocaleString()}
         </p>
       ) : label === 'imageUrl' ? (
-          <div className="col-span-2 mt-4">
-            <img
-              src={record.imageUrl}
-              alt="Record image"
-              className="w-full h-auto rounded-lg shadow-md object-contain"
-              style={{ maxHeight: '300px' }}
-            />
-          </div>
+          record.imageUrl && record.imageUrl !== '0' ? (
+            <div className="col-span-2 mt-4">
+              <img
+                src={record.imageUrl}
+                alt="Record image"
+                className="w-full h-auto rounded-lg shadow-md object-contain"
+                style={{ maxHeight: '300px' }}
+              />
+            </div>
+          ) : (
+              <span className="text-gray-500 italic">No image available</span>
+          )
+          
       ) : (
         <p className="text-lg text-gray-800">
           {record[label as RecordInfoKeys] as string}

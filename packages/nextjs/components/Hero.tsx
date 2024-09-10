@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth/index";
@@ -34,7 +33,7 @@ const Hero = () => {
     } else if (isPatient === true) {
       router.push('/patient/profile');
     } else if (isAdmin === true) {
-      router.push('/admin');
+      router.push('/admin/statistics');
     } else {
       router.push('/register');
     }

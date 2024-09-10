@@ -1,16 +1,18 @@
-import React, { useState, FormEvent } from 'react';
-import { Pill, Stethoscope, FileText, Calendar, LucideIcon } from 'lucide-react';
+import React, { useState, FormEvent, useRef } from 'react';
+import { Image, LucideIcon } from 'lucide-react';
 import { InfoItems } from '~~/data/infoItem';
 import { RecordItems } from '~~/data/recordItem';
 
-import InfoItem from '~~/components/patientInfo/infoItem';
-import RecordDisplay from './patientInfo/recordDisplay';
+import InfoItem from './patientInfo/InfoItem';
+import RecordDisplay from './patientInfo/RecordDisplay';
+import RecordInput from './RecordInput';
+
 import { pinata } from '~~/utils/pinata_config';
 
 interface PatientInfoProps {
   patient: Patient;
   fromDoctor: boolean;
-  onHandlingRecord?: (e: React.FormEvent, description: string, diagnosis: string, treatment: string, imageUrl: string) => void;
+  onHandlingRecord?: (e: React.FormEvent, description: string, diagnosis: string, treatment: string, imageUrl: string, clearInput: () => void) => void;
 }
 
 interface MedicalRecord {
@@ -45,47 +47,76 @@ interface RecordItem {
   icon: LucideIcon;
   title: string;
   label: string;
+  rows: number;
+  className: string;
+  placeholder: string;
 }
 
 const PatientInfo: React.FC<PatientInfoProps> = ({ patient, fromDoctor, onHandlingRecord }) => {
 
-  const [description, setDescription] = useState('');
-  const [diagnosis, setDiagnosis] = useState('');
-  const [treatment, setTreatment] = useState('');
+  const [info, setInfo] = useState({
+    description: '',
+    diagnosis: '',
+    treatment: ''
+  });
 
-  const [selectedFile, setSelectedFile]: any = useState();
+  const [selectedFile, setSelectedFile]: any = useState('No file chosen');
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const infoItems: InfoItem[] = InfoItems;
+  
   const recordItems: RecordItem[] = RecordItems;
+  const recordInputs: RecordItem[] = RecordItems.slice(0, 3)
+
+  const handleChangeInfo = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setInfo({
+      ...info,
+      [name]: value,
+    });
+  }
 
   const clearInput = () => {
-    setDescription('');
-    setDiagnosis('');
-    setTreatment('');
+    
+    setInfo({
+      description: '',
+      diagnosis: '',
+      treatment: ''
+    });
+
+    setSelectedFile(null);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
   }
 
   const handleUploadIPFS = async (e: FormEvent) => {
 
     e.preventDefault();
 
-    try {
-      const upload = await pinata.upload.file(selectedFile)
-      console.log(upload);
+    let signedUrl = '0';
 
-      const signedUrl = await pinata.gateways.createSignedURL({
-        cid: upload.cid,
-        expires: 3600
-      })
+    if (selectedFile) {
+      try {
+        const upload = await pinata.upload.file(selectedFile)
+        console.log(upload);
 
-      if (onHandlingRecord && signedUrl) {
-        onHandlingRecord(e, description, diagnosis, treatment, signedUrl)
-        
-        clearInput()
+        const signedUrlResult = await pinata.gateways.createSignedURL({
+          cid: upload.cid,
+          expires: 3600
+        });
+
+        signedUrl = signedUrlResult || '0';
+
+      } catch (error) {
+        console.log(error);
       }
-
-    } catch (error) {
-      console.log(error);
     }
+
+    if (onHandlingRecord && signedUrl) {
+        onHandlingRecord(e, info.description, info.diagnosis, info.treatment, signedUrl, clearInput)
+      }
   }
 
   type PatientInfoKeys = keyof typeof patient;
@@ -131,71 +162,45 @@ const PatientInfo: React.FC<PatientInfoProps> = ({ patient, fromDoctor, onHandli
 
       {/* Right side: Add New Record Form */}
       {fromDoctor && onHandlingRecord && (
-        <div className="w-full md:w-1/2 p-8 bg-white shadow-lg rounded-lg h-2/3">
+        <div className="w-full md:w-1/2 p-8 bg-white shadow-lg rounded-lg h-5/6">
           <h3 className="text-2xl font-semibold text-blue-600 mb-6">Add New Record</h3>
-          <form onSubmit={(e) => handleUploadIPFS(e)} className="space-y-6">
-            <div className="space-y-2">
-              <label htmlFor="description" className="flex items-center text-lg font-medium text-gray-700">
-                <FileText className="mr-2 h-5 w-5 text-blue-500" />
-                Description
-              </label>
-              <textarea
-                id="description"
-                className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
-                rows={4}
-                placeholder="Describe the patient's condition here"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
+          <form onSubmit={(e) => handleUploadIPFS(e)} className="">
+          
+            {recordInputs.map(recordInput => (
+              <RecordInput
+                icon={recordInput.icon}
+                title={recordInput.title}
+                label={recordInput.label}
+                rows={recordInput.rows}
+                className={recordInput.className}
+                placeholder={recordInput.placeholder}
+                info={info}
+                handleChangeInfo={handleChangeInfo}
               />
-            </div>
+            ))}
 
-            <div className="space-y-2">
-              <label htmlFor="diagnosis" className="flex items-center text-lg font-medium text-gray-700">
-                <Stethoscope className="mr-2 h-5 w-5 text-green-500" />
-                Diagnosis
+            <div className="form-control w-full max-w-xs">
+              <label className="flex items-center text-lg font-medium text-gray-700 mb-2">
+                <Image className='mr-2 h-5 w-5'/>
+                Image
               </label>
               <input
-                type="text"
-                id="diagnosis"
-                className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-green-500"
-                placeholder="Enter the diagnosis"
-                value={diagnosis}
-                onChange={(e) => setDiagnosis(e.target.value)}
-                required
+                type="file"
+                onChange={(e: any) => setSelectedFile(e.target.files[0])}
+                ref={fileInputRef}
+                className="file-input file-input-bordered file-input-primary w-full max-w-xs"
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="treatment" className="flex items-center text-lg font-medium text-gray-700">
-                <Pill className="mr-2 h-5 w-5 text-red-500" />
-                Treatment
-              </label>
-              <input
-                type="text"
-                id="treatment"
-                className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-red-500"
-                placeholder="Describe the treatment plan"
-                value={treatment}
-                onChange={(e) => setTreatment(e.target.value)}
-                required
-              />
-            </div>
-
-            <label className='form-label'>Choose file</label>
-            <input type="file" onChange={(e: any) => setSelectedFile(e.target.files[0])}/>
-
-            <div className="flex justify-center mt-6">
+            <div className="flex justify-center mt-20">
               <button
                 type="submit"
-                className="w-full bg-blue-500 text-white text-lg font-semibold py-3 px-6 rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                className="w-96 bg-blue-500 text-white text-lg font-semibold py-3 px-6 rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               >
                 Add Record
               </button>
             </div>
-          </form>
-
-          
+          </form>        
         </div>
       )}
     </div>

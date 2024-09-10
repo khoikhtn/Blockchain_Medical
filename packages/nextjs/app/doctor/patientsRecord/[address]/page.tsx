@@ -58,7 +58,7 @@ const PatientRecord = () => {
   // Add medical record
   const { writeContractAsync: addRecord } = useScaffoldWriteContract("HealthcareSystem");
 
-  const handleAddingRecord = async (e: FormEvent, description: string, diagnosis: string, treatment: string, imageUrl: string) => {
+  const handleAddingRecord = async (e: FormEvent, description: string, diagnosis: string, treatment: string, imageUrl: string, clearInput: () => void) => {
 
     e.preventDefault();
 
@@ -69,6 +69,8 @@ const PatientRecord = () => {
           args: [patientAddress, description, diagnosis, treatment, imageUrl].filter(Boolean) as [string, string, string, string, string],
         }
       );
+
+      clearInput();
     } catch (error) {
       console.error("Error adding record", error);
     }
