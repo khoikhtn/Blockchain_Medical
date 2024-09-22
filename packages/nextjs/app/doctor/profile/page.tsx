@@ -8,12 +8,12 @@ import InfoItem from '~~/components/patientInfo/InfoItem';
 import { DoctorItems } from "~~/data/doctorItem";
 import { LucideIcon } from "lucide-react";
 
-interface DoctorItem {
+type DoctorItem = {
   icon: LucideIcon;
   label: string;
 }
 
-interface DoctorInfo {
+type DoctorInfo = {
   name: string;
   major: string;
 }

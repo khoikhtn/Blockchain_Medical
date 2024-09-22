@@ -9,13 +9,13 @@ import RecordInput from './RecordInput';
 
 import { pinata } from '~~/utils/pinata_config';
 
-interface PatientInfoProps {
+type PatientInfoProps = {
   patient: Patient;
   fromDoctor: boolean;
   onHandlingRecord?: (e: React.FormEvent, description: string, diagnosis: string, treatment: string, imageUrl: string, clearInput: () => void) => void;
 }
 
-interface MedicalRecord {
+type MedicalRecord = {
   id: bigint;
   description: string;
   diagnosis: string;
@@ -24,7 +24,7 @@ interface MedicalRecord {
   createdTimestamp: bigint;
 }
 
-interface Patient {
+type Patient = {
   name: string;
   phone: string;
   dob: string;
@@ -38,12 +38,12 @@ interface Patient {
   recordCount: bigint;
 }
 
-interface InfoItem {
+type InfoItem = {
   icon: LucideIcon;
   label: string;
 }
 
-interface RecordItem {
+type RecordItem = {
   icon: LucideIcon;
   title: string;
   label: string;

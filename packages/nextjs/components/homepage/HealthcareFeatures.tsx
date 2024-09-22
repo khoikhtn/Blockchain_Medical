@@ -4,7 +4,7 @@ import { LucideIcon } from 'lucide-react';
 import React from "react";
 import { healthcareFeatures } from "~~/data/healthcareFeatures";
 
-interface FeatureBoxProps {
+type FeatureBoxProps = {
   icon: LucideIcon;
   title: string;
   description: string;

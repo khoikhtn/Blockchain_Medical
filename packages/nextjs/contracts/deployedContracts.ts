@@ -196,6 +196,30 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "doctors",
+          outputs: [
+            {
+              internalType: "string",
+              name: "name",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "major",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
               name: "_addr",
               type: "address",
             },
@@ -645,6 +669,70 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "patients",
+          outputs: [
+            {
+              internalType: "string",
+              name: "name",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "phone",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "dob",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "gender",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "bloodType",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "height",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "weight",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "houseAddr",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "allergies",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "recordCount",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
               name: "_doctor",
               type: "address",
             },
@@ -801,10 +889,12 @@ const deployedContracts = {
       ],
       inheritedFunctions: {
         doctorList: "contracts/AdminManagement.sol",
+        doctors: "contracts/AdminManagement.sol",
         isAdmin: "contracts/AdminManagement.sol",
         isDoctor: "contracts/AdminManagement.sol",
         isPatient: "contracts/AdminManagement.sol",
         patientList: "contracts/AdminManagement.sol",
+        patients: "contracts/AdminManagement.sol",
         requestedDoctorList: "contracts/AdminManagement.sol",
         acceptAppointment: "contracts/DoctorManagement.sol",
         addRecord: "contracts/DoctorManagement.sol",

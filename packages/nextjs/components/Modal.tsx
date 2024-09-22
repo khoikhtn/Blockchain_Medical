@@ -1,6 +1,6 @@
 import React from "react";
 
-interface ModalProps {
+type ModalProps = {
   id: string;
   title: string;
   fields: { name: string; label: string; placeholder: string; type: string }[];

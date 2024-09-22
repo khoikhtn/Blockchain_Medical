@@ -3,7 +3,7 @@ import React from "react";
 
 import { blockchainFeatures } from "~~/data/blockchainFeatures";
 
-interface FeatureProps {
+type FeatureProps = {
   imageSrc: string;
   title: string;
 }

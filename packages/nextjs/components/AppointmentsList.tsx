@@ -1,7 +1,7 @@
 import React from "react";
 import { CalendarDays, Clock, FileText, User, Calendar } from "lucide-react";
 
-interface Appointment {
+type Appointment = {
   patientaddr: string;
   doctoraddr: string;
   date: bigint;
@@ -9,7 +9,7 @@ interface Appointment {
   description: string;
 }
 
-interface AppointmentsProps {
+type AppointmentsProps = {
   appointments: Appointment[];
   isRequested: boolean;
   onAccept?: (e: React.FormEvent, patientAddr: string) => void;

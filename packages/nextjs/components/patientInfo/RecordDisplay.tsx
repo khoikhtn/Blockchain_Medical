@@ -1,4 +1,4 @@
-interface MedicalRecord {
+type MedicalRecord = {
   id: bigint;
   description: string;
   diagnosis: string;

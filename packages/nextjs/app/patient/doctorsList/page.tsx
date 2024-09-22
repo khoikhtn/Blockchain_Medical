@@ -34,7 +34,7 @@ const DoctorsList = () => {
   }, [data]);
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg">
+    <div>
       <DoctorInfo
         doctors={doctors}
         isRequested={false}

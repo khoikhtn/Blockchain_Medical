@@ -53,8 +53,8 @@ contract Structures {
     address[] public doctorList;
     address[] public requestedDoctorList;
 
-    mapping(address => Patient) patients;
-    mapping(address => Doctor) doctors;
+    mapping(address => Patient) public patients;
+    mapping(address => Doctor) public doctors;
 
     mapping(address => bool) public isDoctor;
     mapping(address => bool) public isPatient;

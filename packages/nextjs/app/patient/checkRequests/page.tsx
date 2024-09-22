@@ -50,7 +50,7 @@ const CheckRequests = () => {
   }
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg">
+    <div>
       <DoctorInfo
         doctors={requestedDoctors}
         isRequested={true}

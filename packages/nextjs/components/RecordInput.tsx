@@ -1,7 +1,6 @@
-import { Icon } from "lucide-react";
 import React from "react";
 
-interface RecordInputProps {
+type RecordInputProps = {
   icon: any;
   title: string;
   label: string;

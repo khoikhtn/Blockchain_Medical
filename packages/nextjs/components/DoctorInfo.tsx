@@ -2,7 +2,7 @@ import React from "react";
 
 import { User, NotepadText, CircleCheckBig } from 'lucide-react';
 
-interface DoctorInfoProps {
+type DoctorInfoProps = {
   doctors: string[];
   isRequested: boolean;
   onAccept?: (e: React.FormEvent, doctorAddress: string) => void;

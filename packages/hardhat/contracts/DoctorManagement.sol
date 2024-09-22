@@ -13,7 +13,7 @@ contract DoctorManagement is Structures{
 
         for (uint i = 0; i < requestedDoctorList.length; i++) {
           if (msg.sender == requestedDoctorList[i]) {
-            revert("You already requested to be the doctor");
+            revert("You already requested to be a doctor");
           }
         }
 
@@ -50,9 +50,7 @@ contract DoctorManagement is Structures{
     // Doctor retrieves list of patients
     function getPatientsList(address _doctor) public view returns(address[] memory) {
 
-        Doctor storage doctor = doctors[_doctor];
-
-        return doctor.patientsList;
+        return doctors[_doctor].patientsList;
     }
 
     // Authorized doctors add record to patient's profile
