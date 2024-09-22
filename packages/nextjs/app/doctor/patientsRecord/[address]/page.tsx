@@ -1,13 +1,12 @@
-'use client'
+"use client";
 
-import { useParams } from "next/navigation"
 import { FormEvent, useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { useAccount } from "wagmi";
-import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import PatientInfo from "~~/components/PatientInfo";
+import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 const PatientRecord = () => {
-
   const { address: patientAddress } = useParams();
   const { address: doctorAddress } = useAccount();
 
@@ -21,7 +20,14 @@ const PatientRecord = () => {
     weight: string;
     houseAddr: string;
     allergies: string;
-    records: { id: bigint; description: string; diagnosis: string; treatment: string; imageUrl: string; createdTimestamp: bigint;}[];
+    records: {
+      id: bigint;
+      description: string;
+      diagnosis: string;
+      treatment: string;
+      imageUrl: string;
+      createdTimestamp: bigint;
+    }[];
     recordCount: bigint;
   }>();
 
@@ -36,7 +42,6 @@ const PatientRecord = () => {
 
   useEffect(() => {
     if (data) {
-      
       const [name, phone, dob, gender, bloodType, height, weight, houseAddr, allergies, records, recordCount] = data;
 
       setInfo({
@@ -49,8 +54,15 @@ const PatientRecord = () => {
         weight: weight as string,
         houseAddr: houseAddr as string,
         allergies: allergies as string,
-        records: records as { id: bigint; description: string; diagnosis: string; treatment: string; imageUrl: string; createdTimestamp: bigint;}[],
-        recordCount: recordCount as bigint
+        records: records as {
+          id: bigint;
+          description: string;
+          diagnosis: string;
+          treatment: string;
+          imageUrl: string;
+          createdTimestamp: bigint;
+        }[],
+        recordCount: recordCount as bigint,
       });
     }
   }, [data]);
@@ -58,32 +70,39 @@ const PatientRecord = () => {
   // Add medical record
   const { writeContractAsync: addRecord } = useScaffoldWriteContract("HealthcareSystem");
 
-  const handleAddingRecord = async (e: FormEvent, description: string, diagnosis: string, treatment: string, imageUrl: string, clearInput: () => void) => {
-
+  const handleAddingRecord = async (
+    e: FormEvent,
+    description: string,
+    diagnosis: string,
+    treatment: string,
+    imageUrl: string,
+    clearInput: () => void,
+  ) => {
     e.preventDefault();
 
     try {
-      await addRecord(
-        {
-          functionName: "addRecord",
-          args: [patientAddress, description, diagnosis, treatment, imageUrl].filter(Boolean) as [string, string, string, string, string],
-        }
-      );
+      await addRecord({
+        functionName: "addRecord",
+        args: [patientAddress, description, diagnosis, treatment, imageUrl].filter(Boolean) as [
+          string,
+          string,
+          string,
+          string,
+          string,
+        ],
+      });
 
       clearInput();
     } catch (error) {
       console.error("Error adding record", error);
     }
-
-  }
+  };
 
   return (
     <div>
-      <div>
-        {info && <PatientInfo patient={info} fromDoctor={true} onHandlingRecord={handleAddingRecord} />}
-      </div>
+      <div>{info && <PatientInfo patient={info} fromDoctor={true} onHandlingRecord={handleAddingRecord} />}</div>
     </div>
-  )
-}
+  );
+};
 
-export default PatientRecord
+export default PatientRecord;

@@ -1,23 +1,22 @@
-'use client'
+"use client";
 
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi"
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { useAccount } from "wagmi";
 import AppointmentsList from "~~/components/AppointmentsList";
-
-import { Calendar } from "lucide-react";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 const Appointments = () => {
-
   const { address: patientAddress } = useAccount();
 
-  const [appointments, setAppointments] = useState<{
-    patientaddr: string;
-    doctoraddr: string;
-    date: bigint;
-    time: bigint;
-    description: string
-  }[]>([]);
+  const [appointments, setAppointments] = useState<
+    {
+      patientaddr: string;
+      doctoraddr: string;
+      date: bigint;
+      time: bigint;
+      description: string;
+    }[]
+  >([]);
 
   // Smart contract interaction
 
@@ -25,7 +24,7 @@ const Appointments = () => {
   const { data: confirmedAppointments } = useScaffoldReadContract({
     contractName: "HealthcareSystem",
     functionName: "getAppointments",
-    args: [patientAddress]
+    args: [patientAddress],
   });
 
   useEffect(() => {
@@ -37,15 +36,10 @@ const Appointments = () => {
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg">
       <div className="px-6 py-4">
-        <AppointmentsList
-          appointments={appointments}
-          isRequested={false}
-        />
-        </div>
+        <AppointmentsList appointments={appointments} isRequested={false} />
+      </div>
     </div>
+  );
+};
 
-    
-  )
-}
-
-export default Appointments
+export default Appointments;

@@ -1,11 +1,10 @@
-'use client'
+"use client";
 
-import { useRouter, useParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 const DoctorProfile = () => {
-
   const { address: doctorAddress } = useParams();
   const router = useRouter();
 
@@ -19,7 +18,7 @@ const DoctorProfile = () => {
   const { data } = useScaffoldReadContract({
     contractName: "HealthcareSystem",
     functionName: "getDoctorInfo",
-    args: [doctorAddress, doctorAddress].filter(Boolean) as [string, string]
+    args: [doctorAddress, doctorAddress].filter(Boolean) as [string, string],
   });
 
   useEffect(() => {
@@ -36,9 +35,8 @@ const DoctorProfile = () => {
   const { writeContractAsync: removingDoctor } = useScaffoldWriteContract("HealthcareSystem");
 
   const handleRemoving = async (e: FormEvent) => {
-
     e.preventDefault();
-  
+
     try {
       await removingDoctor({
         functionName: "removeDoctors",
@@ -46,7 +44,7 @@ const DoctorProfile = () => {
       });
 
       // Redirect to the doctors list after removing successfully
-      router.push('/admin/doctorsList');
+      router.push("/admin/doctorsList");
     } catch (error) {
       console.error("Error removing doctor", error);
     }
@@ -65,12 +63,15 @@ const DoctorProfile = () => {
               />
               <div>
                 <h2 className="text-2xl font-semibold text-gray-800">Dr. {info.name}</h2>
-                <p className="text-gray-600"><span>Major: </span><strong>{info.major}</strong></p>
+                <p className="text-gray-600">
+                  <span>Major: </span>
+                  <strong>{info.major}</strong>
+                </p>
               </div>
             </div>
 
             <hr className="my-8" />
-            
+
             <form onSubmit={handleRemoving}>
               <button
                 type="submit"
@@ -79,14 +80,13 @@ const DoctorProfile = () => {
                 Remove this doctor
               </button>
             </form>
-
           </div>
-        ): (
+        ) : (
           <div className="text-center text-gray-500">Doctor information not available.</div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DoctorProfile
+export default DoctorProfile;

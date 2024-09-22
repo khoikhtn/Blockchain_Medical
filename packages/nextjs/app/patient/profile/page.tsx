@@ -1,12 +1,11 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from "react";
-import { useAccount } from "wagmi"
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth"
+import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 import PatientInfo from "~~/components/PatientInfo";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 const Profile = () => {
-
   const { address: connectedAddress } = useAccount();
 
   const [info, setInfo] = useState<{
@@ -19,7 +18,14 @@ const Profile = () => {
     weight: string;
     houseAddr: string;
     allergies: string;
-    records: { id: bigint; description: string; diagnosis: string; treatment: string; imageUrl: string;  createdTimestamp: bigint; }[];
+    records: {
+      id: bigint;
+      description: string;
+      diagnosis: string;
+      treatment: string;
+      imageUrl: string;
+      createdTimestamp: bigint;
+    }[];
     recordCount: bigint;
   }>();
 
@@ -29,12 +35,11 @@ const Profile = () => {
   const { data } = useScaffoldReadContract({
     contractName: "HealthcareSystem",
     functionName: "getPatientInfo",
-    args: [connectedAddress, connectedAddress]
-  })
+    args: [connectedAddress, connectedAddress],
+  });
 
   useEffect(() => {
     if (data) {
-      
       const [name, phone, dob, gender, bloodType, height, weight, houseAddr, allergies, records, recordCount] = data;
 
       setInfo({
@@ -47,18 +52,20 @@ const Profile = () => {
         weight: weight as string,
         houseAddr: houseAddr as string,
         allergies: allergies as string,
-        records: records as { id: bigint; description: string; diagnosis: string; treatment: string; imageUrl: string; createdTimestamp: bigint; }[],
-        recordCount: recordCount as bigint
+        records: records as {
+          id: bigint;
+          description: string;
+          diagnosis: string;
+          treatment: string;
+          imageUrl: string;
+          createdTimestamp: bigint;
+        }[],
+        recordCount: recordCount as bigint,
       });
     }
   }, [data]);
 
-  return (
-    <div>
-      {info && <PatientInfo patient={info} fromDoctor={false} />}
-    </div>
-    
-  )
-}
+  return <div>{info && <PatientInfo patient={info} fromDoctor={false} />}</div>;
+};
 
-export default Profile
+export default Profile;

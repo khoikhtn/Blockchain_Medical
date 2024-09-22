@@ -1,14 +1,11 @@
-'use client'
+"use client";
 
 import { FormEvent, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
-import { CircleCheckBig } from 'lucide-react' 
-
 import DoctorInfo from "~~/components/DoctorInfo";
+import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 const CheckRequests = () => {
-
   const { address: connectedAddress } = useAccount();
 
   const [requestedDoctors, setRequestedDoctors] = useState<string[]>([]);
@@ -25,7 +22,7 @@ const CheckRequests = () => {
 
   useEffect(() => {
     if (data) {
-      setRequestedDoctors([...data])
+      setRequestedDoctors([...data]);
     }
   }, [data]);
 
@@ -34,30 +31,23 @@ const CheckRequests = () => {
   const { writeContractAsync: grantAccess } = useScaffoldWriteContract("HealthcareSystem");
 
   const handleGrantAccess = async (e: FormEvent, doctorAddress: string) => {
-
     e.preventDefault();
 
     try {
-      await grantAccess(
-        {
-          functionName: "grantAccess",
-          args: [doctorAddress],
-        }
-      );
+      await grantAccess({
+        functionName: "grantAccess",
+        args: [doctorAddress],
+      });
     } catch (error) {
       console.error("Error granting access", error);
     }
-  }
+  };
 
   return (
     <div>
-      <DoctorInfo
-        doctors={requestedDoctors}
-        isRequested={true}
-        onAccept={handleGrantAccess}
-      />
+      <DoctorInfo doctors={requestedDoctors} isRequested={true} onAccept={handleGrantAccess} />
     </div>
   );
-}
+};
 
-export default CheckRequests
+export default CheckRequests;

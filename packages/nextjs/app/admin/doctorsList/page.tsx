@@ -1,14 +1,12 @@
-'use client'
+"use client";
 
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAccount } from "wagmi"
+import { useAccount } from "wagmi";
+import DoctorInfo from "~~/components/DoctorInfo";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
-import DoctorInfo from "~~/components/DoctorInfo";
-  
 const GetDoctors = () => {
-
   const { address: connectedAddress } = useAccount();
 
   const [requested, setRequested] = useState<string[]>([]);
@@ -18,7 +16,7 @@ const GetDoctors = () => {
 
   const handleViewingProfile = (doctorAddress: string) => {
     router.push(`/admin/doctorsProfile/${doctorAddress}`);
-  }
+  };
 
   // Smart contract interaction
 
@@ -27,7 +25,7 @@ const GetDoctors = () => {
     contractName: "HealthcareSystem",
     functionName: "getRequestedDoctorsList",
     args: [connectedAddress],
-  })
+  });
 
   // Retrieve Doctors list
   const { data: confirmedDoctors } = useScaffoldReadContract({
@@ -38,11 +36,11 @@ const GetDoctors = () => {
 
   useEffect(() => {
     if (confirmedDoctors) {
-      setDoctors([...confirmedDoctors])
+      setDoctors([...confirmedDoctors]);
     }
 
     if (requestedDoctors) {
-      setRequested([...requestedDoctors])
+      setRequested([...requestedDoctors]);
     }
   }, [confirmedDoctors, requestedDoctors]);
 
@@ -50,39 +48,27 @@ const GetDoctors = () => {
   const { writeContractAsync: acceptRequested } = useScaffoldWriteContract("HealthcareSystem");
 
   const handleAcceptingrequested = async (e: FormEvent, doctorAddress: string) => {
-
     e.preventDefault();
 
     try {
-      await acceptRequested(
-        {
-          functionName: "confirmRegistration",
-          args: [doctorAddress]
-        }
-      );
+      await acceptRequested({
+        functionName: "confirmRegistration",
+        args: [doctorAddress],
+      });
     } catch (error) {
       console.log("Error accepting requested doctor", error);
     }
-  }
+  };
 
   return (
     <div>
-      <DoctorInfo
-        doctors={requested}
-        isRequested={true}
-        onAccept={handleAcceptingrequested}
-      />
+      <DoctorInfo doctors={requested} isRequested={true} onAccept={handleAcceptingrequested} />
 
       <hr className="border-gray-300 my-10" />
-      
-      <DoctorInfo
-        doctors={doctors}
-        isRequested={false}
-        onView={handleViewingProfile}
-      />
 
+      <DoctorInfo doctors={doctors} isRequested={false} onView={handleViewingProfile} />
     </div>
   );
-}
+};
 
-export default GetDoctors
+export default GetDoctors;

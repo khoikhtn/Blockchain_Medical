@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { useParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { useAccount } from "wagmi";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
@@ -9,9 +9,9 @@ const DoctorProfile = () => {
   const { address: doctorAddress } = useParams();
   const { address: patientAddress } = useAccount();
 
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
-  const [description, setDescription] = useState('');
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [description, setDescription] = useState("");
 
   const [info, setInfo] = useState<{
     name: string;
@@ -40,23 +40,26 @@ const DoctorProfile = () => {
   const { writeContractAsync: scheduling } = useScaffoldWriteContract("HealthcareSystem");
 
   const handleScheduling = async (e: FormEvent) => {
-    
     e.preventDefault();
     try {
-
       const dateTimestamp = Math.floor(new Date(date).getTime() / 1000);
 
-      const [hours, minutes] = time.split(':').map(Number);
+      const [hours, minutes] = time.split(":").map(Number);
       const timeSeconds = hours * 3600 + minutes * 60;
 
       await scheduling({
         functionName: "requestAppointment",
-        args: [doctorAddress, BigInt(dateTimestamp), BigInt(timeSeconds), description].filter(Boolean) as [string, bigint, bigint, string],
+        args: [doctorAddress, BigInt(dateTimestamp), BigInt(timeSeconds), description].filter(Boolean) as [
+          string,
+          bigint,
+          bigint,
+          string,
+        ],
       });
       // Reset form fields after successful scheduling
-      setDate('');
-      setTime('');
-      setDescription('');
+      setDate("");
+      setTime("");
+      setDescription("");
     } catch (error) {
       console.error("Error scheduling", error);
     }
@@ -75,7 +78,10 @@ const DoctorProfile = () => {
               />
               <div>
                 <h2 className="text-2xl font-semibold text-gray-800">Dr. {info.name}</h2>
-                <p className="text-gray-600"><span>Major: </span><strong>{info.major}</strong></p>
+                <p className="text-gray-600">
+                  <span>Major: </span>
+                  <strong>{info.major}</strong>
+                </p>
               </div>
             </div>
 
@@ -91,7 +97,7 @@ const DoctorProfile = () => {
                   type="date"
                   id="date"
                   value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                  onChange={e => setDate(e.target.value)}
                   required
                   className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -105,7 +111,7 @@ const DoctorProfile = () => {
                   type="time"
                   id="time"
                   value={time}
-                  onChange={(e) => setTime(e.target.value)}
+                  onChange={e => setTime(e.target.value)}
                   required
                   className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -118,7 +124,7 @@ const DoctorProfile = () => {
                 <textarea
                   id="description"
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={e => setDescription(e.target.value)}
                   required
                   rows={4}
                   className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
@@ -134,7 +140,6 @@ const DoctorProfile = () => {
                   Confirm Appointment
                 </button>
               </div>
-          
             </form>
           </div>
         ) : (

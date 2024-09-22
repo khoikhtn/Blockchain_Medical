@@ -1,19 +1,24 @@
-import React, { useState, FormEvent, useRef } from 'react';
-import { Image, LucideIcon } from 'lucide-react';
-import { InfoItems } from '~~/data/infoItem';
-import { RecordItems } from '~~/data/recordItem';
-
-import InfoItem from './patientInfo/InfoItem';
-import RecordDisplay from './patientInfo/RecordDisplay';
-import RecordInput from './RecordInput';
-
-import { pinata } from '~~/utils/pinata_config';
+import React, { FormEvent, useRef, useState } from "react";
+import RecordInput from "./RecordInput";
+import InfoItem from "./patientInfo/InfoItem";
+import RecordDisplay from "./patientInfo/RecordDisplay";
+import { Image, LucideIcon } from "lucide-react";
+import { InfoItems } from "~~/data/infoItem";
+import { RecordItems } from "~~/data/recordItem";
+import { pinata } from "~~/utils/pinata_config";
 
 type PatientInfoProps = {
   patient: Patient;
   fromDoctor: boolean;
-  onHandlingRecord?: (e: React.FormEvent, description: string, diagnosis: string, treatment: string, imageUrl: string, clearInput: () => void) => void;
-}
+  onHandlingRecord?: (
+    e: React.FormEvent,
+    description: string,
+    diagnosis: string,
+    treatment: string,
+    imageUrl: string,
+    clearInput: () => void,
+  ) => void;
+};
 
 type MedicalRecord = {
   id: bigint;
@@ -22,7 +27,7 @@ type MedicalRecord = {
   treatment: string;
   imageUrl: string;
   createdTimestamp: bigint;
-}
+};
 
 type Patient = {
   name: string;
@@ -36,12 +41,12 @@ type Patient = {
   allergies: string;
   records: MedicalRecord[];
   recordCount: bigint;
-}
+};
 
 type InfoItem = {
   icon: LucideIcon;
   label: string;
-}
+};
 
 type RecordItem = {
   icon: LucideIcon;
@@ -50,23 +55,22 @@ type RecordItem = {
   rows: number;
   className: string;
   placeholder: string;
-}
+};
 
 const PatientInfo: React.FC<PatientInfoProps> = ({ patient, fromDoctor, onHandlingRecord }) => {
-
   const [info, setInfo] = useState({
-    description: '',
-    diagnosis: '',
-    treatment: ''
+    description: "",
+    diagnosis: "",
+    treatment: "",
   });
 
-  const [selectedFile, setSelectedFile]: any = useState('No file chosen');
+  const [selectedFile, setSelectedFile]: any = useState("No file chosen");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const infoItems: InfoItem[] = InfoItems;
-  
+
   const recordItems: RecordItem[] = RecordItems;
-  const recordInputs: RecordItem[] = RecordItems.slice(0, 3)
+  const recordInputs: RecordItem[] = RecordItems.slice(0, 3);
 
   const handleChangeInfo = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -74,62 +78,67 @@ const PatientInfo: React.FC<PatientInfoProps> = ({ patient, fromDoctor, onHandli
       ...info,
       [name]: value,
     });
-  }
+  };
 
   const clearInput = () => {
-    
     setInfo({
-      description: '',
-      diagnosis: '',
-      treatment: ''
+      description: "",
+      diagnosis: "",
+      treatment: "",
     });
 
     setSelectedFile(null);
 
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''
+      fileInputRef.current.value = "";
     }
-  }
+  };
 
   const handleUploadIPFS = async (e: FormEvent) => {
-
     e.preventDefault();
 
-    let signedUrl = '0';
+    let signedUrl = "0";
 
     if (selectedFile) {
       try {
-        const upload = await pinata.upload.file(selectedFile)
+        const upload = await pinata.upload.file(selectedFile);
         console.log(upload);
 
         const signedUrlResult = await pinata.gateways.createSignedURL({
           cid: upload.cid,
-          expires: 3600
+          expires: 3600,
         });
 
-        signedUrl = signedUrlResult || '0';
-
+        signedUrl = signedUrlResult || "0";
       } catch (error) {
         console.log(error);
       }
     }
 
     if (onHandlingRecord && signedUrl) {
-        onHandlingRecord(e, info.description, info.diagnosis, info.treatment, signedUrl, clearInput)
-      }
-  }
+      onHandlingRecord(e, info.description, info.diagnosis, info.treatment, signedUrl, clearInput);
+    }
+  };
 
   type PatientInfoKeys = keyof typeof patient;
 
   return (
-    <div className={`${fromDoctor ? 'flex gap-8 h-screen' : ''}`}>
-
+    <div className={`${fromDoctor ? "flex gap-8 h-screen" : ""}`}>
       {/* Left side: Patient Information and Medical Records */}
-      <div className={`${fromDoctor ? 'md:w-1/2' : 'md:w-full'} p-8 bg-gradient-to-b from-white to-blue-50 shadow-lg rounded-lg overflow-y-auto`}>
+      <div
+        className={`${
+          fromDoctor ? "md:w-1/2" : "md:w-full"
+        } p-8 bg-gradient-to-b from-white to-blue-50 shadow-lg rounded-lg overflow-y-auto`}
+      >
         <h2 className="text-3xl font-bold text-blue-600 mb-6 pb-2 border-b-2 border-blue-200">Patient Information</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          {infoItems.map(infoItem => (
-            <InfoItem icon={infoItem.icon} label={ infoItem.label } value={patient[infoItem.label as PatientInfoKeys] as string} />
+          {infoItems.map((infoItem, index) => (
+            <InfoItem
+              key={index}
+              icon={infoItem.icon}
+              label={infoItem.label}
+              value={patient[infoItem.label as PatientInfoKeys] as string}
+            />
           ))}
         </div>
 
@@ -137,19 +146,20 @@ const PatientInfo: React.FC<PatientInfoProps> = ({ patient, fromDoctor, onHandli
         {patient.records.length > 0 ? (
           <ul className="space-y-6">
             {patient.records.map(record => (
-              <li key={record.id.toString()} className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+              <li
+                key={record.id.toString()}
+                className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="col-span-2">
-                    <span className="text-lg font-bold text-gray-500">Record ID: <span className="text-lg font-semibold text-gray-800 ml-1">{record.id.toString()}</span></span>
+                    <span className="text-lg font-bold text-gray-500">
+                      Record ID:{" "}
+                      <span className="text-lg font-semibold text-gray-800 ml-1">{record.id.toString()}</span>
+                    </span>
                   </div>
 
-                  {recordItems.map(item => (
-                    <RecordDisplay
-                      icon={item.icon}
-                      title={item.title}
-                      label={item.label}
-                      record={record} 
-                    />
+                  {recordItems.map((item, index) => (
+                    <RecordDisplay key={index} icon={item.icon} title={item.title} label={item.label} record={record} />
                   ))}
                 </div>
               </li>
@@ -164,10 +174,10 @@ const PatientInfo: React.FC<PatientInfoProps> = ({ patient, fromDoctor, onHandli
       {fromDoctor && onHandlingRecord && (
         <div className="w-full md:w-1/2 p-8 bg-white shadow-lg rounded-lg h-5/6">
           <h3 className="text-2xl font-semibold text-blue-600 mb-6">Add New Record</h3>
-          <form onSubmit={(e) => handleUploadIPFS(e)} className="">
-          
-            {recordInputs.map(recordInput => (
+          <form onSubmit={e => handleUploadIPFS(e)} className="">
+            {recordInputs.map((recordInput, index) => (
               <RecordInput
+                key={index}
                 icon={recordInput.icon}
                 title={recordInput.title}
                 label={recordInput.label}
@@ -181,7 +191,7 @@ const PatientInfo: React.FC<PatientInfoProps> = ({ patient, fromDoctor, onHandli
 
             <div className="form-control w-full max-w-xs">
               <label className="flex items-center text-lg font-medium text-gray-700 mb-2">
-                <Image className='mr-2 h-5 w-5'/>
+                <Image className="mr-2 h-5 w-5" />
                 Image
               </label>
               <input
@@ -200,11 +210,11 @@ const PatientInfo: React.FC<PatientInfoProps> = ({ patient, fromDoctor, onHandli
                 Add Record
               </button>
             </div>
-          </form>        
+          </form>
         </div>
       )}
     </div>
   );
-}
+};
 
 export default PatientInfo;

@@ -1,15 +1,12 @@
-'use client'
+"use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
-import { User, Calendar } from 'lucide-react';
-
 import DoctorInfo from "~~/components/DoctorInfo";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 const DoctorsList = () => {
-
   const { address: connectedAddress } = useAccount();
   const [doctors, setDoctors] = useState<string[]>([]);
 
@@ -17,7 +14,7 @@ const DoctorsList = () => {
 
   const handleScheduleAppointment = (doctorAddress: string) => {
     router.push(`/patient/doctorsProfile/${doctorAddress}`);
-  }
+  };
 
   // Smart contract interaction
 
@@ -29,19 +26,15 @@ const DoctorsList = () => {
 
   useEffect(() => {
     if (data) {
-      setDoctors([...data])
+      setDoctors([...data]);
     }
   }, [data]);
 
   return (
     <div>
-      <DoctorInfo
-        doctors={doctors}
-        isRequested={false}
-        onView={handleScheduleAppointment}
-      />
+      <DoctorInfo doctors={doctors} isRequested={false} onView={handleScheduleAppointment} />
     </div>
   );
-}
+};
 
-export default DoctorsList
+export default DoctorsList;
