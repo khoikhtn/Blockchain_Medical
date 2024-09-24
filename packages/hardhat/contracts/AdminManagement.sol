@@ -83,8 +83,8 @@ contract AdminManagement is Structures{
                 check = true;
               }
 
-              if (check == true) {
-                list[i] = list[i + 1];
+              if (check == true && j < list.length - 1) {
+                list[j] = list[j + 1];
               }
             }
 
